@@ -35,6 +35,7 @@ describe('studio routes', () => {
         })
       })
   })
+
   it('POST studio', () => {
     return request(app)
       .post('/api/v1/studios')
@@ -48,6 +49,15 @@ describe('studio routes', () => {
     const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
+      .then(res => {
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
+      })
+  })
+
+  it('delete studio by ID', async() => {
+    const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
+    return request(app)
+      .delete(`/api/v1/studios/${studio._id}`)
       .then(res => {
         expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
       })
