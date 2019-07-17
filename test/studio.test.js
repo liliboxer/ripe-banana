@@ -40,7 +40,16 @@ describe('studio routes', () => {
       .post('/api/v1/studios')
       .send({ name: 'Studio Ghibli', address: { city: 'Tokyo',state: 'Tokyo', country: 'Japan'}})
       .then(res => {
-        expect(res.body).toEqual({  __v: 0, _id: expect.any(String),name: 'Studio Ghibli', address: { city: 'Tokyo',state: 'Tokyo', country: 'Japan'}});
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Studio Ghibli', address: { city: 'Tokyo',state: 'Tokyo', country: 'Japan'}});
+      })
+  })
+
+  it('GET studio by id', async() => {
+    const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
+    return request(app)
+      .get(`/api/v1/studios/${studio._id}`)
+      .then(res => {
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool',state: 'Idk', country: 'USA'}});
       })
   })
 })
