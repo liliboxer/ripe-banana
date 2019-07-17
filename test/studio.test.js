@@ -35,7 +35,12 @@ describe('studio routes', () => {
         })
       })
   })
-  // it('POST studio', () => {
-  //   .post('/api/v1/studios')
-  // })
+  it('POST studio', () => {
+    return request(app)
+      .post('/api/v1/studios')
+      .send({ name: 'Studio Ghibli', address: { city: 'Tokyo',state: 'Tokyo', country: 'Japan'}})
+      .then(res => {
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String),name: 'Studio Ghibli', address: { city: 'Tokyo',state: 'Tokyo', country: 'Japan'}});
+      })
+  })
 })
