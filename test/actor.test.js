@@ -35,4 +35,13 @@ describe('actor routes', () => {
         });
       });
   });
+
+  it('GET actor by Id', async() => {
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07', pob: 'somewhere' });
+    return request(app)
+      .get(`/api/v1/actors/${actor._id}`)
+      .then(res => {
+        expect(res.body).toEqual({ _id: expect.any(String), name: 'lili', dob: expect.any(String), pob: 'somewhere' });
+      });
+  });
 });
