@@ -29,7 +29,10 @@ describe('actor routes', () => {
     return request(app)
       .get('/api/v1/actors')
       .then(res => {
-        expect(res.body).toEqual()
-      })
+        const actorsJSON = JSON.parse(JSON.stringify(actors));
+        actorsJSON.forEach(actor => {
+          expect(res.body).toContainEqual({ name: actor.name, _id: actor._id });
+        });
+      });
   });
 });
