@@ -46,6 +46,15 @@ describe('reviewer routes', () => {
       });
   });
 
+  it('POST reviewer', async() => {
+    const reviewer = await Reviewer.create({ name: 'harry', company: 'harry potter 3' });
+    return request(app)
+      .post(`/api/v1/reviewers/${reviewer._id}`)
+      .send({ name: 'lili', company: 'i am tired' })
+      .then(res => {
+        expect(res.body).toEqual({ _id: expect.any(String), __v: 0, name: 'lili', company: 'i am tired' });
+      });
+  });
   // post
   // put 
 
