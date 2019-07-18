@@ -44,4 +44,13 @@ describe('actor routes', () => {
         expect(res.body).toEqual({ _id: expect.any(String), name: 'lili', dob: expect.any(String), pob: 'somewhere' });
       });
   });
+
+  it('POST actor', async() => {
+    return request(app)
+      .post('/api/v1/actors')
+      .send({ name: 'lili', dob: '1992-03-07', pob: 'somewhere' })
+      .then(res => {
+        expect(res.body).toEqual({ _id: expect.any(String), __v: 0, name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
+      });
+  });
 });
