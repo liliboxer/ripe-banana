@@ -42,7 +42,7 @@ describe('film routes', () => {
     return mongoose.connection.close();
   });
 
-  it('GET films, return id title released studio{id, name}', async() => {
+  it('GET films, return id title released studio {id, name}', async() => {
     const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio });
     return request(app)
       .get('/api/v1/films')
@@ -50,9 +50,8 @@ describe('film routes', () => {
         const filmJSON = JSON.parse(JSON.stringify(film));
         delete filmJSON.cast;
         delete filmJSON.__v;
-        expect(res.body).toEqual([filmJSON]);
+        expect(res.body).toContainEqual({ title: film.title, _id: film._id.toString(), released: film.released, studio: { _id: studio._id.toString(), name: studio.name } });
       });
-
   });
 
   it('POST film', () => {
@@ -72,5 +71,13 @@ describe('film routes', () => {
           }))
         });
       });
+  });
+
+  it('GET film by id', async() => {
+    const film = await Film.create({ title: 'Harry Potter', studio, released: 1990, cast: cast });
+    return request(app)
+      .get(`/api/v1/${film._id}`);
+      
+
   });
 });
