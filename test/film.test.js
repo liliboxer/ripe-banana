@@ -20,6 +20,7 @@ describe('film routes', () => {
   
   let studio = null;
   let actors = null;
+  let cast = null;
 
   beforeEach(async() => {
     studio = JSON.parse(JSON.stringify(await Studio.create({ name: 'Max Studio', address: { city: 'Portland', state: 'Oregon', country: 'USA' } })));
@@ -31,6 +32,10 @@ describe('film routes', () => {
     actors.forEach(actor => {
       JSON.parse(JSON.stringify(actor));
     });
+    cast = actors.map((actor, i) => ({
+      role: `extra ${i}`,
+      actor: actor._id.toString()
+    }));
   });
 
   afterAll(() => {
@@ -48,5 +53,24 @@ describe('film routes', () => {
         expect(res.body).toEqual([filmJSON]);
       });
 
+  });
+
+  it('POST film', () => {
+    return request(app)
+      .post('/api/v1/films')
+      .send({ title: 'Totoro', studio, released: 1993, cast: cast })
+      .then(res => {
+        expect(res.body).toEqual({ 
+          _id: expect.any(String),
+          __v: 0,
+          title: 'Totoro',
+          studio: studio._id.toString(),
+          released: 1993,
+          cast: cast.map(c => ({
+            ...c,
+            _id: expect.any(String)
+          }))
+        });
+      });
   });
 });
