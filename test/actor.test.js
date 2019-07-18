@@ -53,4 +53,23 @@ describe('actor routes', () => {
         expect(res.body).toEqual({ _id: expect.any(String), __v: 0, name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
       });
   });
+
+  it('PUT actor', async() => {
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07', pob: 'somewhere' });
+    return request(app)
+      .put(`/api/v1/actors/${actor._id}`)
+      .send({ name: 'dirt', dob: '1982-05-14', pob: 'somewhere' })
+      .then(res => {
+        expect(res.body).toEqual({ _id: expect.any(String), name: 'dirt', dob: '1982-05-14T00:00:00.000Z', pob: 'somewhere' });
+      });
+  });
+
+  it('delete actor by id', async() => {
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07', pob: 'somewhere' });
+    return request(app)
+      .delete(`/api/v1/actors/${actor._id}`)
+      .then(res => {
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
+      });
+  })
 });
