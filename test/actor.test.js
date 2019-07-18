@@ -71,5 +71,5 @@ describe('actor routes', () => {
       .then(res => {
         expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
       });
-  })
+  });
 });
