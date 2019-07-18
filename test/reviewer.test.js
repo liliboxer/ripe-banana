@@ -65,5 +65,4 @@ describe('reviewer routes', () => {
         expect(res.body).toEqual({ _id: expect.any(String), __v: 0, name: 'alex', company: 'harry potter 3' });
       });
   });
-
 });
