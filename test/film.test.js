@@ -95,4 +95,14 @@ describe('film routes', () => {
         });
       });
   });
+
+  it('DELETE film by id', async() => {
+    const film = JSON.parse(JSON.stringify(await Film.create({ title: 'Harry Potter', studio, released: 1990, cast: cast })));
+
+    return request(app)
+      .delete(`/api/v1/films/${film._id}`)
+      .then(res => {
+        expect(res.body).toEqual(film);
+      });
+  });
 });
