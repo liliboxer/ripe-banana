@@ -29,12 +29,12 @@ describe('film routes', () => {
       { name: 'dirt', dob: '1982-03-05', pob: 'really' },
       { name: 'alex', dob: '1992-03-07', pob: 'cool' }
     ]);
-    actors.forEach(actor => {
-      JSON.parse(JSON.stringify(actor));
+    const actorArr = actors.map(actor => {
+      return JSON.parse(JSON.stringify(actor));
     });
-    cast = actors.map((actor, i) => ({
+    cast = actorArr.map((actor, i) => ({
       role: `extra ${i}`,
-      actor: actor._id.toString()
+      actor: { _id: actor._id, name: actor.name }
     }));
   });
 
@@ -50,7 +50,12 @@ describe('film routes', () => {
         const filmJSON = JSON.parse(JSON.stringify(film));
         delete filmJSON.cast;
         delete filmJSON.__v;
-        expect(res.body).toContainEqual({ title: film.title, _id: film._id.toString(), released: film.released, studio: { _id: studio._id.toString(), name: studio.name } });
+        expect(res.body).toContainEqual({ 
+          title: film.title, 
+          _id: film._id.toString(), 
+          released: film.released, 
+          studio: { _id: studio._id.toString(), name: studio.name }
+        });
       });
   });
 
@@ -66,8 +71,9 @@ describe('film routes', () => {
           studio: studio._id.toString(),
           released: 1993,
           cast: cast.map(c => ({
-            ...c,
-            _id: expect.any(String)
+            _id: expect.any(String),
+            role: c.role,
+            actor: c.actor._id
           }))
         });
       });
@@ -76,8 +82,17 @@ describe('film routes', () => {
   it('GET film by id', async() => {
     const film = await Film.create({ title: 'Harry Potter', studio, released: 1990, cast: cast });
     return request(app)
-      .get(`/api/v1/${film._id}`);
-      
-
+      .get(`/api/v1/films/${film._id}`)
+      .then(res => {
+        expect(res.body).toEqual({ 
+          title: 'Harry Potter', 
+          studio: { _id: studio._id, name: studio.name },
+          released: 1990, 
+          cast: cast.map(c => ({
+            ...c,
+            _id: expect.any(String)
+          }))
+        });
+      });
   });
 });
