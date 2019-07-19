@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const Studio = require('../lib/models/Studio');
 const Film = require('../lib/models/Film');
+const Actor = require('../lib/models/Actor');
 
 describe('studio routes', () => {
   beforeAll(() => {
@@ -65,12 +66,24 @@ describe('studio routes', () => {
       });
   });
 
-  it('delete studio by ID', async() => {
+  it('delete studio by ID that does not contain films', async() => {
     const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
     return request(app)
       .delete(`/api/v1/studios/${studio._id}`)
       .then(res => {
         expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+      });
+  });
+
+  it('throw err if studio has film', async() => {
+    const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
+    const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio, cast: [{ role: 'kitty', actor: actor._id }] });
+
+    return request(app)
+      .delete(`/api/v1/studios/${studio._id}`)
+      .then(res => {
+        expect(res.status).toEqual(409);
       });
   });
 });
