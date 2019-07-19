@@ -6,6 +6,8 @@ const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 
 const Actor = require('../lib/models/Actor');
+const Studio = require('../lib/models/Studio');
+const Film = require('../lib/models/Film');
 
 describe('actor routes', () => {
   beforeAll(() => {
@@ -31,17 +33,30 @@ describe('actor routes', () => {
       .then(res => {
         const actorsJSON = JSON.parse(JSON.stringify(actors));
         actorsJSON.forEach(actor => {
-          expect(res.body).toContainEqual({ name: actor.name, _id: actor._id });
+          expect(res.body).toContainEqual({ name: actor.name, _id: actor._id.toString() });
         });
       });
   });
 
   it('GET actor by Id', async() => {
-    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07', pob: 'somewhere' });
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
+    const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+    const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio, cast: [{ role: 'kitty', actor: actor._id }] });
     return request(app)
       .get(`/api/v1/actors/${actor._id}`)
       .then(res => {
-        expect(res.body).toEqual({ _id: expect.any(String), name: 'lili', dob: expect.any(String), pob: 'somewhere' });
+        console.log(res.body);
+        expect(res.body).toEqual({ 
+          _id: expect.any(String), 
+          name: 'lili', 
+          dob: expect.any(String), 
+          pob: 'somewhere',
+          films: [{
+            _id: film._id.toString(),
+            title: film.title,
+            released: film.released
+          }]
+        });
       });
   });
 
