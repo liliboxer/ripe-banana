@@ -78,6 +78,7 @@ describe('studio routes', () => {
   it('throw err if studio has film', async() => {
     const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
     const actor = await Actor.create({ name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
+    // eslint-disable-next-line no-unused-vars
     const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio, cast: [{ role: 'kitty', actor: actor._id }] });
 
     return request(app)
