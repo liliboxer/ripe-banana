@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const Film = require('../lib/models/Film');
 const Studio = require('../lib/models/Studio');
 const Actor = require('../lib/models/Actor');
+const Review = require('../lib/models/Review');
+const Reviewer = require('../lib/models/Reviewer');
 
 describe('film routes', () => {
   beforeAll(() => {
@@ -80,7 +82,9 @@ describe('film routes', () => {
   });
 
   it('GET film by id', async() => {
-    const film = await Film.create({ title: 'Harry Potter', studio, released: 1990, cast: cast });
+    const film = JSON.parse(JSON.stringify(await Film.create({ title: 'Harry Potter', studio, released: 1990, cast: cast })));
+    const reviewer = JSON.parse(JSON.stringify(await Reviewer.create({ name: 'lili', company: 'talks too loud' })));
+    const review = JSON.parse(JSON.stringify(await Review.create({ rating: 10, reviewer, review: 'it\'s friday bitches', film })));
     return request(app)
       .get(`/api/v1/films/${film._id}`)
       .then(res => {
@@ -91,7 +95,16 @@ describe('film routes', () => {
           cast: cast.map(c => ({
             ...c,
             _id: expect.any(String)
-          }))
+          })),
+          reviews: [{
+            _id: review._id,
+            rating: review.rating,
+            review: review.review,
+            reviewer: {
+              _id: reviewer._id,
+              name: reviewer.name
+            }
+          }]
         });
       });
   });

@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 
 const Studio = require('../lib/models/Studio');
 const Film = require('../lib/models/Film');
-const Actor = require('../lib/models/Actor');
 
 describe('studio routes', () => {
   beforeAll(() => {
@@ -43,7 +42,11 @@ describe('studio routes', () => {
       .post('/api/v1/studios')
       .send({ name: 'Studio Ghibli', address: { city: 'Tokyo', state: 'Tokyo', country: 'Japan' } })
       .then(res => {
-        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Studio Ghibli', address: { city: 'Tokyo', state: 'Tokyo', country: 'Japan' } });
+        expect(res.body).toEqual({  
+          __v: 0, _id: expect.any(String), 
+          name: 'Studio Ghibli', 
+          address: { city: 'Tokyo', state: 'Tokyo', country: 'Japan' } 
+        });
       });
   });
 
