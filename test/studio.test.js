@@ -50,7 +50,7 @@ describe('studio routes', () => {
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
       .then(res => {
-        expect(res.body).toEqual({ _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
       });
   });
 
