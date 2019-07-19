@@ -53,4 +53,13 @@ describe('review routes', () => {
         expect(res.body).toHaveLength(100);
       });
   });
+
+  it('POST review', () => {
+    return request(app)
+      .post('/api/v1/reviews')
+      .send({ rating: 8, reviewer: reviewer._id, review: 'this is review', film: film._id })
+      .then(res => {
+        expect(res.body).toEqual({ _id: expect.any(String), __v: 0, rating: 8, reviewer: reviewer._id, review: 'this is review', film: film._id, createdAt: expect.any(String), updatedAt: expect.any(String) });
+      });
+  });
 });
