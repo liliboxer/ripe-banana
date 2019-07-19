@@ -6,6 +6,8 @@ const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 
 const Studio = require('../lib/models/Studio');
+const Film = require('../lib/models/Film');
+const Actor = require('../lib/models/Actor');
 
 describe('studio routes', () => {
   beforeAll(() => {
@@ -47,10 +49,16 @@ describe('studio routes', () => {
 
   it('GET studio by id', async() => {
     const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+    const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio });
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
       .then(res => {
-        expect(res.body).toEqual({  __v: 0, _id: expect.any(String), name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+        expect(res.body).toEqual({  
+          _id: expect.any(String), 
+          name: 'Wes Anderson', 
+          address: { city: 'Cool', state: 'Idk', country: 'USA' }, 
+          films: [{ _id: film._id.toString(), title: film.title }] 
+        });
       });
   });
 
