@@ -5,7 +5,12 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 
+const Studio = require('../lib/models/Studio');
+const Actor = require('../lib/models/Actor');
+const Film = require('../lib/models/Film');
 const Reviewer = require('../lib/models/Reviewer');
+const Review = require('../lib/models/Review');
+
 
 describe('reviewer routes', () => {
   beforeAll(() => {
@@ -37,12 +42,26 @@ describe('reviewer routes', () => {
   });
 
   it('GET reviewer by ID', async() => {
+    const studio = await Studio.create({ name: 'Wes Anderson', address: { city: 'Cool', state: 'Idk', country: 'USA' } });
+    const actor = await Actor.create({ name: 'lili', dob: '1992-03-07T00:00:00.000Z', pob: 'somewhere' });
     const reviewer = await Reviewer.create({ name: 'harry', company: 'harry potter 3' });
+    const film = await Film.create({ title: 'Princess Mononoke', released: 1990, studio, cast: [{ role: 'kitty', actor: actor._id }] });
+    const review = await Review.create({ rating: 8, reviewer: reviewer._id.toString(), review: 'this is difficult', film: film._id.toString() });
+
     return request(app)
       .get(`/api/v1/reviewers/${reviewer._id}`)
       .then(res => {
-        const reviewerJSON = JSON.parse(JSON.stringify(reviewer));
-        expect(res.body).toEqual(reviewerJSON);
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'harry', 
+          company: 'harry potter 3',
+          reviews: [{
+            _id: review._id.toString(),
+            rating: review.rating,
+            review: review.review,
+            film: { _id: film._id.toString(), title: film.title }
+          }]
+        });
       });
   });
 
